@@ -13,6 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 st.set_page_config( page_title="SkillBridge AI Dashboard", layout="wide")
 
 # AUTO REFRESH (REAL-TIME SIMULATION)
+
 st_autorefresh(interval=60000, key="dashboard_refresh")
 
 sns.set_theme(style="whitegrid", palette="muted")
