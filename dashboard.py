@@ -131,9 +131,26 @@ elif menu == "Undersupply Analysis":
     units_to_test = filtered_demand['Judul Unit'].tolist()
     kemunculan = []
     for unit in units_to_test:
-        keyword = " ".join(unit.split()[:2]).lower()
-        jumlah = teks_resume.count(unit.lower())
-        kemunculan.append(jumlah)
+        unit_low = unit.lower()
+        count = 0
+        # Contoh: Jika unit mengandung kata 'keamanan' atau 'security', cari 'security' di resume
+        if 'keamanan' in unit_low or 'security' in unit_low:
+            count += teks_resume.count('security')
+        
+        # Contoh: Jika unit mengandung 'data', cari 'data' atau 'sql'
+        if 'data' in unit_low:
+            count += teks_resume.count('data') + teks_resume.count('sql')
+            
+        # Contoh: Jika unit mengandung 'transformasi' atau 'management', cari 'management'
+        if 'transformasi' in unit_low or 'aspirasi' in unit_low:
+            count += teks_resume.count('management') + teks_resume.count('leadership')
+
+        # Jika tidak masuk kategori di atas, balik ke cara biasa (ambil 1 kata pertama saja)
+        if count == 0:
+            keyword_simpel = unit.split()[0].lower()
+            count = teks_resume.count(keyword_simpel)
+            
+        kemunculan.append(count)
 
     # DATAFRAME VISUALISASI
     df_plot = pd.DataFrame({ 'Unit SKKNI': filtered_demand['Kompetensi_Short'], 'Ketersediaan': kemunculan })
