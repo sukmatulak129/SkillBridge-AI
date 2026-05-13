@@ -122,7 +122,7 @@ if menu == "Main Skill Gap":
 
 # UNDERSUPPLY ANALYSIS
 elif menu == "Undersupply Analysis":
-    st.subheader(f"🔍 Undersupply Analysis: {selected_job}")
+    st.subheader(f"Undersupply Analysis: {selected_job}")
     
     # 1. Gabungkan semua skill dari resume untuk pencarian cepat
     # Kita ambil dari kolom 'skills_clean' agar lebih akurat dibanding teks mentah
@@ -185,7 +185,7 @@ elif menu == "Undersupply Analysis":
     ax3.set_title("Tingkat Ketersediaan Kompetensi SKKNI pada Dataset Resume", fontsize=14, fontweight='bold')
     st.pyplot(fig3)
 
-    st.info("💡 **Insight:** Jika grafik menunjukkan angka rendah, berarti skill tersebut sangat langka (Undersupply) di pasar tenaga kerja saat ini.")
+    st.info("Jika grafik menunjukkan angka rendah, berarti skill tersebut sangat langka (Undersupply) di pasar tenaga kerja saat ini.")
         #
 
 # SOLUTION VALIDATION
