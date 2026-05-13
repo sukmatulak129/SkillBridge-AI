@@ -131,6 +131,7 @@ elif menu == "Undersupply Analysis":
     units_to_test = filtered_demand['Judul Unit'].tolist()
     kemunculan = []
     for unit in units_to_test:
+        keyword = " ".join(unit.split()[:2]).lower()
         jumlah = teks_resume.count(unit.lower())
         kemunculan.append(jumlah)
 
