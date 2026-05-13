@@ -95,8 +95,8 @@ if menu == "Main Skill Gap":
 
         sns.barplot( data=df_supply.head(top_n), x='Frekuensi', y='Kompetensi', ax=ax1, hue='Kompetensi', legend=False)
 
-        ax1.set_title( f"Top {top_n} Skill Pelamar", fontsize=14, fontweight='bold' )
-        ax1.set_xlabel("Frekuensi")
+        ax1.set_title( f"Top {top_n} Skill Pelamar Internasional", fontsize=14, fontweight='bold' )
+        ax1.set_xlabel("Frekuensi di Resume")
         ax1.set_ylabel("Skill")
 
         st.pyplot(fig1)
@@ -107,8 +107,8 @@ if menu == "Main Skill Gap":
 
         sns.barplot( data=filtered_demand, x='Frekuensi', y='Kompetensi_Short', ax=ax2, hue='Kompetensi_Short', legend=False )
 
-        ax2.set_title( f"Top {top_n} Skill Demand SKKNI", fontsize=14, fontweight='bold')
-        ax2.set_xlabel("Frekuensi")
+        ax2.set_title( f"Top {top_n} Kompetensi Standar Industri", fontsize=14, fontweight='bold')
+        ax2.set_xlabel("Frekuensi Rujukan di SKKNI")
         ax2.set_ylabel("Kompetensi")
 
         st.pyplot(fig2)
