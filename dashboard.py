@@ -6,6 +6,8 @@ import ast
 from collections import Counter
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 # KONFIGURASI HALAMAN
 st.set_page_config( page_title="SkillBridge AI Dashboard", layout="wide")
