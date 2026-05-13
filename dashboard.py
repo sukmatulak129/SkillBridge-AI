@@ -59,7 +59,7 @@ st.title("SkillBridge AI Dashboard")
 st.markdown("### Real-Time Skill Gap Analysis System")
 
 # SIDEBAR
-st.sidebar.header("⚙️ Dashboard Control")
+st.sidebar.header("Dashboard Control")
 
 # Timestamp refresh
 st.sidebar.success( f"Last Refresh:\n{datetime.now().strftime('%H:%M:%S')}")
@@ -85,7 +85,7 @@ else:
 # MAIN SKILL GAP
 if menu == "Main Skill Gap":
 
-    st.subheader(f"📌 Skill Gap Analysis : {selected_job}")
+    st.subheader(f"Skill Gap Analysis : {selected_job}")
 
     col1, col2 = st.columns(2)
 
