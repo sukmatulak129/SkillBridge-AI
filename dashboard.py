@@ -122,72 +122,72 @@ if menu == "Main Skill Gap":
 
 # UNDERSUPPLY ANALYSIS
 elif menu == "Undersupply Analysis":
-    st.subheader(f"Undersupply Analysis: {selected_job}")
-    
-    # 1. Gabungkan semua skill dari resume untuk pencarian cepat
-    # Kita ambil dari kolom 'skills_clean' agar lebih akurat dibanding teks mentah
-    semua_resume_skills = " ".join(df_resume['skills_clean'].astype(str).tolist()).lower()
+    st.subheader(f"Undersupply Analysis : {selected_job}")
 
-    # 2. Ambil daftar unit dari demand yang sudah difilter
-    units_to_test = filtered_demand['Judul Unit'].tolist()
-    names_to_show = filtered_demand['Kompetensi_Short'].tolist()
-    kemunculan = []
+    # -----------------------------
+    # 1. AMBIL DATA SKKNI
+    # -----------------------------
+    units_to_test = filtered_demand['Judul Unit'].fillna("").tolist()
 
-    # 3. Mapping Kamus Sederhana (Indo -> English)
-    # Ini supaya data resume Inggris kamu bisa 'nyambung' ke SKKNI Indonesia
-    mapping_kamus = {
-        "keamanan": "security",
-        "data": "data",
-        "informasi": "information",
-        "perangkat lunak": "software",
-        "jaringan": "network",
-        "awan": "cloud",
-        "transformasi": "management",
-        "industri": "business",
-        "infrastruktur": "infrastructure",
-        "risiko": "risk",
-        "perlindungan": "protection",
-        "pengujian": "testing"
-    }
+    # -----------------------------
+    # 2. AMBIL DATA RESUME
+    # -----------------------------
+    resume_texts = df_resume['resume_text_clean'].fillna("").astype(str).tolist()
 
-    for unit in units_to_test:
-        unit_low = unit.lower()
-        found_count = 0
-        
-        # Cek apakah ada kata kunci di kamus yang cocok dengan judul unit
-        match_found = False
-        for indo, eng in mapping_kamus.items():
-            if indo in unit_low:
-                # Hitung kemunculan kata Inggris-nya di resume
-                found_count += semua_resume_skills.count(eng)
-                match_found = True
-        
-        # Jika tidak ada di kamus, cari kata pertama dari judul unit (asumsi kata dasar)
-        if not match_found:
-            kata_kunci_asli = unit_low.split()[0]
-            if len(kata_kunci_asli) > 3: # Hindari kata depan pendek seperti 'dan', 'di'
-                found_count = semua_resume_skills.count(kata_kunci_asli)
-        
-        kemunculan.append(found_count)
+    # -----------------------------
+    # 3. GABUNG SEMUA RESUME
+    # -----------------------------
+    corpus = units_to_test + resume_texts
 
-    # 4. Buat DataFrame untuk Grafik
+    # -----------------------------
+    # 4. TF-IDF VECTOR
+    # -----------------------------
+    vectorizer = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = vectorizer.fit_transform(corpus)
+
+    skkni_vec = tfidf_matrix[:len(units_to_test)]
+    resume_vec = tfidf_matrix[len(units_to_test):]
+
+    # -----------------------------
+    # 5. HITUNG SIMILARITY (INI INTINYA)
+    # -----------------------------
+    similarity_matrix = cosine_similarity(skkni_vec, resume_vec)
+
+    kemunculan = similarity_matrix.max(axis=1) * 100  # ubah ke persen
+
+    # -----------------------------
+    # 6. DATAFRAME HASIL
+    # -----------------------------
     df_plot = pd.DataFrame({
-        'Unit SKKNI': names_to_show,
-        'Ketersediaan di Resume': kemunculan
+        'Unit SKKNI': filtered_demand['Kompetensi_Short'].values,
+        'Ketersediaan (%)': kemunculan
     })
 
-    # 5. Visualisasi
-    if df_plot['Ketersediaan di Resume'].sum() == 0:
-        st.warning("⚠️ Tidak ditemukan kecocokan kata kunci yang signifikan. Hal ini menunjukkan adanya 'Language Gap' antara standar SKKNI (Indo) dan Resume (English).")
-    
+    # -----------------------------
+    # 7. VISUALISASI
+    # -----------------------------
     fig3, ax3 = plt.subplots(figsize=(12, 6))
-    sns.barplot(data=df_plot, x='Ketersediaan di Resume', y='Unit SKKNI', ax=ax3, palette="viridis")
-    ax3.set_title("Tingkat Ketersediaan Kompetensi SKKNI pada Dataset Resume", fontsize=14, fontweight='bold')
+
+    sns.barplot(
+        data=df_plot,
+        x='Ketersediaan (%)',
+        y='Unit SKKNI',
+        ax=ax3
+    )
+
+    ax3.axvline(50, color='orange', linestyle='--', label='Low Match Threshold')
+    ax3.axvline(70, color='red', linestyle='--', label='KPI Threshold')
+
+    ax3.set_title("Undersupply Analysis (Semantic Matching)", fontsize=14, fontweight='bold')
+    ax3.set_xlabel("Skill Availability (%)")
+    ax3.set_ylabel("Unit Kompetensi")
+
     st.pyplot(fig3)
 
-    st.info("Jika grafik menunjukkan angka rendah, berarti skill tersebut sangat langka (Undersupply) di pasar tenaga kerja saat ini.")
-        #
-
+    st.warning(
+        "Nilai ini berbasis semantic similarity, bukan exact text matching."
+    )
+    
 # SOLUTION VALIDATION
 else:
     st.subheader("Solution Validation")
